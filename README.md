@@ -14,12 +14,17 @@ El presente manual constituye la referencia oficial de los procesos de la Fábri
 | Perfil | Lectura principal | Lectura complementaria |
 |---|---|---|
 | **Gerencia / Product Owner** | [Parte A — Guía de GitHub para la gerencia](#parte-a--guía-de-github-para-la-gerencia) | [Parte B — Mapa de la organización](#parte-b--mapa-de-la-organización) |
-| **Desarrollador de nuevo ingreso** | [Parte C — Ciclo de vida de una tarea](#parte-c--ciclo-de-vida-de-una-tarea-creación-revisión-y-despliegue) | [Parte D — Manual por aplicación](#parte-d--manual-por-aplicación) |
+| **Desarrollador de nuevo ingreso** | [Flujo de Trabajo Completo de Factory](#flujo-de-trabajo-completo-de-factory) y [Parte C — Ciclo de vida de una tarea](#parte-c--ciclo-de-vida-de-una-tarea-creación-revisión-y-despliegue) | [Parte D — Manual por aplicación](#parte-d--manual-por-aplicación) |
 | **Líder técnico / revisor** | [C.4 Revisión de código](#c4-revisión-de-código-code-review) | [Parte E — Hallazgos y mejoras pendientes](#parte-e--hallazgos-y-mejoras-pendientes) |
 
 ## Tabla de contenido
 
 - [Estructura del equipo](#estructura-del-equipo)
+- [Flujo de Trabajo Completo de Factory](#flujo-de-trabajo-completo-de-factory)
+  - [Roles y responsabilidades](#roles-y-responsabilidades)
+  - [Estrategia de naming de repositorios](#estrategia-de-naming-de-repositorios)
+  - [Estrategia de branching](#estrategia-de-branching)
+  - [Estrategia de testing](#estrategia-de-testing)
 - [Parte A — Guía de GitHub para la gerencia](#parte-a--guía-de-github-para-la-gerencia)
   - [A.1 Conceptos fundamentales](#a1-conceptos-fundamentales)
   - [A.2 Consulta del historial de cambios (commits)](#a2-consulta-del-historial-de-cambios-commits)
@@ -45,6 +50,253 @@ El presente manual constituye la referencia oficial de los procesos de la Fábri
 | **Fullstack 1** | Andrés Carlos | @andres-c94 | Frontend, backend de soporte, supervisión de Brayan |
 | **Fullstack 2** | Brian Bohórquez | @bbohorquezs | Backend, frontend de soporte |
 | **Cloud / Infraestructura / Developer Jr** | Brayan Gerez | @bgerez | Cloud, scripts de AWS |
+
+---
+
+# Flujo de Trabajo Completo de Factory
+
+Esta sección define los roles del equipo y los estándares técnicos de la Fábrica: nomenclatura de repositorios, modelo de ramas y estrategia de pruebas e integración continua. Estos estándares rigen el ciclo de vida de las tareas descrito en la [Parte C](#parte-c--ciclo-de-vida-de-una-tarea-creación-revisión-y-despliegue).
+
+## Roles y responsabilidades
+
+Los roles describen responsabilidades y no personas: un integrante puede ejercer más de un rol según el proyecto (ver [Estructura del equipo](#estructura-del-equipo)).
+
+### Team Leader Fullstack
+Responsable técnico de la fábrica y del resultado final en producción.
+
+- Define la **arquitectura** de las soluciones (web, API, desktop/ArcGIS Pro, cloud).
+- Lidera el **triaje semanal**: prioriza, estima y asigna issues al sprint o backlog.
+- Es **reviewer obligatorio** de los PRs hacia `main` y de los cambios de arquitectura.
+- Aprueba y coordina los **hotfix** y los despliegues a producción.
+- Define y vela por los **estándares**: naming, branching, testing, seguridad y CI/CD.
+- Desbloquea al equipo, resuelve dependencias entre proyectos (Cross-Project) y hace mentoría a los seniors y juniors.
+- Puede desarrollar en cualquier capa (front, back, desktop) cuando el proyecto lo requiere.
+
+### Frontend Senior
+Responsable de la capa `-web` de las aplicaciones.
+
+- Diseña la **arquitectura del frontend** (estructura de módulos/componentes, estado, routing, manejo de errores).
+- Desarrolla las funcionalidades de UI y su integración con la API y servicios de mapas (ArcGIS Maps SDK).
+- Garantiza **calidad visual y de experiencia**: responsive, accesibilidad, rendimiento de carga.
+- Escribe y mantiene **pruebas unitarias** de componentes/servicios y **pruebas E2E** de los flujos críticos.
+- Hace **code review** de los PRs de frontend y supervisa/acompaña a los juniors en tareas de front.
+- Define junto al Backend Senior los **contratos de la API** que consume el front.
+
+### Backend Senior
+Responsable de la capa `-api` de las aplicaciones.
+
+- Diseña la **arquitectura del backend**: modelos, ORM, endpoints REST, autenticación/autorización.
+- Modela y optimiza la **base de datos** (PostgreSQL/PostGIS, SQL Server): migraciones, índices, queries espaciales.
+- Integra servicios externos (ArcGIS Enterprise, proveedores de imágenes, servicios AWS).
+- Garantiza **seguridad** (validación de inputs, manejo de credenciales, permisos) y **rendimiento**.
+- Escribe y mantiene **pruebas unitarias** y **pruebas de integración** (API + BD).
+- Documenta los endpoints (OpenAPI/Swagger) y hace **code review** de los PRs de backend.
+
+### Junior Developer
+Desarrollador en formación que trabaja bajo la supervisión de un senior.
+
+- Toma **tareas acotadas** (template Jr Tasks): componentes, endpoints simples, scripts, ajustes de UI, corrección de bugs menores.
+- Sigue estrictamente el **flujo de branching** y las **convenciones de naming** y de commits.
+- Escribe **pruebas unitarias** para todo el código que entrega.
+- Abre PRs pequeños y bien descritos; **atiende el feedback** del code review.
+- Pregunta temprano: comenta en el issue cuando está bloqueado o con dudas, en lugar de esperar.
+- Documenta lo que aprende (scripts, configuración, pasos de despliegue) para el resto del equipo.
+
+---
+
+## Estrategia de naming de repositorios
+
+Cada aplicación se divide en repositorios por **capa**, con la nomenclatura:
+
+```
+<nombre-aplicacion>-<capa>
+```
+
+| Capa | Sufijo | Contenido | Ejemplo |
+|------|--------|-----------|---------|
+| Frontend | `-web` | Aplicación web (Angular / React / Next.js) | `abaco-web` |
+| Backend | `-api` | API REST (Django REST Framework / FastAPI) | `abaco-api` |
+| Desktop | `-desktop` | Add-in de ArcGIS Pro | `abaco-desktop` |
+
+**Reglas:**
+- Todo en **minúsculas**, palabras separadas por **guion** (`-`), sin espacios, tildes ni guion bajo.
+- El nombre de la aplicación es el **mismo** en todas sus capas, para que los repos se agrupen al buscarlos.
+- Si una aplicación necesita una capa adicional (ej. infraestructura o scripts), se sigue el mismo patrón: `<nombre-aplicacion>-infra`.
+- Se exceptúan los repositorios de la organización que no son aplicaciones, como `Metodologia`.
+
+> **Estado actual:** `mapasco-landing-web` y `prisma-agro-desktop` cumplen la convención. Los repositorios que no la cumplen se relacionan en [E.3](#e3-configuración-faltante-en-los-repositorios).
+
+---
+
+## Estrategia de branching
+
+### Ramas permanentes
+
+| Rama | Ambiente | Propósito |
+|------|----------|-----------|
+| `main` | **Producción** | Código en producción. Está conectada a **CI/CD**: todo push/merge a `main` se integra y despliega automáticamente (frontend en AWS hacia **CloudFront**; sitios estáticos mediante **GitHub Pages**). |
+| `develop` (dev) | **Pruebas** | Integración y pruebas antes de pasar a producción. Toda modificación llega primero aquí. |
+
+- **Nadie hace push directo a `main` ni a `develop`**: todo entra por Pull Request con review aprobado y checks en verde.
+- `develop` → `main` se hace mediante PR cuando lo probado en dev está listo para producción.
+
+### Ramas de trabajo (una por cada modificación)
+
+Por cada nueva modificación se crea una rama desde `develop` con el formato:
+
+```
+<prefijo>/<cambio>
+```
+
+El **prefijo** indica el tipo de cambio y el **cambio** describe qué se hace, en minúsculas y con guiones. Opcionalmente se incluye el número del issue:
+
+| Prefijo | Uso | Ejemplo |
+|---------|-----|---------|
+| `feat` | Nueva funcionalidad | `feat/add-orm` · `feat/ISS-123-add-orm` |
+| `fix` | Corrección de un bug | `fix/b-component` · `fix/ISS-456-b-component` |
+| `refactor` | Mejora interna sin cambiar comportamiento | `refactor/optimize-queries` |
+| `docs` | Documentación | `docs/update-readme` |
+| `test` | Agregar o corregir pruebas | `test/add-auth-tests` |
+| `chore` | Configuración, dependencias, CI | `chore/update-dependencies` |
+| `hotfix` | Corrección urgente en producción (sale de `main`) | `hotfix/ISS-789-login-error` |
+
+Las tareas de los desarrolladores junior utilizan los mismos prefijos según el tipo de cambio. En la [Parte C](#c22-preparación-de-develop-y-creación-de-la-rama) se detalla el origen y el destino de cada tipo de rama.
+
+> Git no permite `:` ni espacios en nombres de rama, por eso el `feat: add orm` del commit se escribe `feat/add-orm` en la rama. El mismo prefijo se usa en el mensaje del commit: `feat(api): add orm`.
+
+### Flujo resumido
+
+```
+feat/add-orm ──PR──> develop (pruebas) ──PR──> main (producción ──CI/CD──> CloudFront)
+                                                  ▲
+hotfix/ISS-789-... ──────────────PR───────────────┘  (luego merge de main en develop)
+```
+
+---
+
+## Estrategia de testing
+
+### Pirámide de testing
+
+```
+            ▲
+           /  \        Pocas   → Pruebas de usuario (E2E / UI)
+          /----\
+         /      \      Menos   → Pruebas de integración
+        /--------\
+       /          \    Muchas  → Pruebas unitarias
+      /____________\
+```
+
+| Nivel | Cantidad | Qué prueba | Velocidad | Herramientas sugeridas |
+|-------|----------|------------|-----------|------------------------|
+| **Unitarias** | **Muchas** (la base) | Una función, clase, componente o servicio aislado, con dependencias simuladas (mocks) | Milisegundos | `pytest` / `unittest` (Django, FastAPI), Jest / Jasmine-Karma (React, Angular), MSTest / xUnit (add-in ArcGIS Pro) |
+| **Integración** | **Menos** | Varias piezas trabajando juntas: endpoint + ORM + base de datos, servicio + API externa | Segundos | `pytest` + base de datos de pruebas (PostgreSQL/PostGIS en Docker), `TestClient` de FastAPI, `APITestCase` de DRF |
+| **Usuario (E2E)** | **Pocas** (la punta) | Flujos críticos completos como los vive el usuario (login, crear/consultar un registro, ver el mapa) | Minutos | Playwright / Cypress |
+
+**Reglas:**
+- Todo PR que agregue lógica debe incluir **pruebas unitarias**.
+- Los endpoints y consultas a base de datos importantes llevan **pruebas de integración**.
+- Las pruebas E2E se reservan para los **flujos críticos** del negocio; no se duplican en E2E casos que ya cubren las unitarias.
+- Un bug corregido debe venir con una prueba que **reproduzca el bug** y evite que regrese.
+
+### Code Scanning con GitHub Actions
+
+El análisis estático de seguridad se ejecuta automáticamente con **GitHub Actions** (CodeQL) en cada PR hacia `develop` y `main`, y de forma programada cada semana. Los hallazgos aparecen en la pestaña **Security → Code scanning** del repo, y un hallazgo de severidad alta bloquea el merge.
+
+**`.github/workflows/codeql.yml`:**
+```yaml
+name: CodeQL
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+  schedule:
+    - cron: "0 6 * * 1"   # lunes 6:00 UTC
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    strategy:
+      matrix:
+        language: [javascript-typescript, python]   # ajustar según el repo (csharp para -desktop)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - uses: github/codeql-action/autobuild@v3
+      - uses: github/codeql-action/analyze@v3
+```
+
+Complementos recomendados: **Dependabot** (alertas y actualización de dependencias vulnerables) y **Secret scanning** (detección de credenciales subidas por error).
+
+### CI/CD con GitHub Actions
+
+| Evento | CI (integración continua) | CD (despliegue continuo) |
+|--------|---------------------------|--------------------------|
+| PR hacia `develop` o `main` | Lint + pruebas unitarias + integración + build + CodeQL | — |
+| Merge/push a `develop` | Lo mismo + E2E | Despliegue al ambiente de **pruebas** |
+| Merge/push a `main` | Lo mismo | Despliegue a **producción** (frontend → S3 + **CloudFront**) |
+
+**Ejemplo `.github/workflows/ci-cd.yml` (repo `-web`):**
+```yaml
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --watch=false
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  deploy:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+      - run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} --delete
+      - run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+```
+
+**Reglas:**
+- Las **branch protection rules** de `main` y `develop` exigen que los jobs de CI y CodeQL pasen antes de permitir el merge.
+- Las credenciales **nunca** van en el código: se usan **GitHub Secrets** y, en AWS, roles con OIDC.
+- Los repos `-api` y `-desktop` siguen el mismo esquema de CI; su paso de despliegue cambia según el destino (ej. AWS para la API, empaquetado `.esriAddinX` como release para el add-in).
 
 ---
 
@@ -101,14 +353,15 @@ Referencia: [Ver y comparar commits — GitHub Docs](https://docs.github.com/es/
 
 ## A.3 Modelo de ramas
 
-La organización adopta el modelo **GitFlow** ([Driessen, 2010](https://nvie.com/posts/a-successful-git-branching-model/); [Atlassian](https://www.atlassian.com/es/git/tutorials/comparing-workflows/gitflow-workflow)), estructurado de la siguiente manera:
+La organización adopta el modelo **GitFlow** (detalle técnico en [Estrategia de branching](#estrategia-de-branching)) ([Driessen, 2010](https://nvie.com/posts/a-successful-git-branching-model/); [Atlassian](https://www.atlassian.com/es/git/tutorials/comparing-workflows/gitflow-workflow)), estructurado de la siguiente manera:
 
 | Rama | Función | Regla |
 |---|---|---|
 | `main` | Versión en producción | Contiene únicamente lo desplegado en producción. No se desarrolla directamente sobre ella. |
 | `develop` | Integración | Consolida las funcionalidades terminadas antes de su paso a producción. |
-| `feature/ISS-...` | Desarrollo de nuevas funcionalidades | Se crea desde `develop` y se integra en `develop`. |
-| `bugfix/ISS-...` | Corrección de errores | Se crea desde `develop` y se integra en `develop`. |
+| `feat/...` | Desarrollo de nuevas funcionalidades | Se crea desde `develop` y se integra en `develop`. |
+| `fix/...` | Corrección de errores | Se crea desde `develop` y se integra en `develop`. |
+| `refactor/`, `docs/`, `test/`, `chore/` | Mejoras internas, documentación, pruebas y mantenimiento | Se crean desde `develop` y se integran en `develop`. |
 | `hotfix/ISS-...` | Atención de incidentes en producción | Se crea desde `main` y se integra en `main` y en `develop`. |
 
 ```mermaid
@@ -117,12 +370,12 @@ gitGraph
    branch develop
    checkout develop
    commit id: "base develop"
-   branch feature/ISS-12-mapa
-   checkout feature/ISS-12-mapa
+   branch feat/ISS-12-mapa
+   checkout feat/ISS-12-mapa
    commit id: "feat: mapa"
    commit id: "feat: filtros"
    checkout develop
-   merge feature/ISS-12-mapa id: "PR #13 aprobado"
+   merge feat/ISS-12-mapa id: "PR #13 aprobado"
    checkout main
    merge develop id: "v1.1.0" tag: "v1.1.0"
    branch hotfix/ISS-20-login
@@ -324,21 +577,21 @@ git pull origin develop
 git merge origin/main        # garantiza que develop incluya los hotfix aplicados
 git push origin develop
 
-git checkout -b feature/ISS-123-descripcion-corta
-git push -u origin feature/ISS-123-descripcion-corta
+git checkout -b feat/ISS-123-descripcion-corta
+git push -u origin feat/ISS-123-descripcion-corta
 ```
 
-**Convención de nombres de ramas:**
+**Convención de nombres de ramas** (formato `<prefijo>/<cambio>`, ver [Estrategia de branching](#estrategia-de-branching)):
 
 | Tipo | Patrón | Origen | Destino |
 |---|---|---|---|
-| Funcionalidad | `feature/ISS-{n}-{descripcion}` | `develop` | `develop` |
-| Corrección | `bugfix/ISS-{n}-{descripcion}` | `develop` | `develop` |
-| Urgencia | `hotfix/ISS-{n}-{descripcion}` | `main` | `main` y `develop` |
-| Tarea junior | `task/ISS-{n}-{descripcion}` | `develop` | `develop` |
+| Funcionalidad | `feat/ISS-{n}-{descripcion}` | `develop` | `develop` |
+| Corrección | `fix/ISS-{n}-{descripcion}` | `develop` | `develop` |
 | Refactorización | `refactor/ISS-{n}-{descripcion}` | `develop` | `develop` |
+| Documentación, pruebas, mantenimiento | `docs/`, `test/`, `chore/` | `develop` | `develop` |
+| Urgencia | `hotfix/ISS-{n}-{descripcion}` | `main` | `main` y `develop` |
 
-`{n}` corresponde al **número del issue en GitHub**. Ejemplo: `prisma-agro-desktop` utiliza `feature/ISS-1-ngrdi-refactoring` para el issue #1.
+`{n}` corresponde al **número del issue en GitHub**; puede omitirse en cambios menores sin issue (ej. `fix/b-component`). Las ramas creadas antes de esta convención, como `feature/ISS-1-ngrdi-refactoring` en `prisma-agro-desktop`, conservan su nombre hasta su integración.
 
 ### C.2.3 Commits
 
@@ -367,7 +620,7 @@ git push
 
 ## C.3 Apertura del Pull Request
 
-1. Seleccionar **"Compare & pull request"** en GitHub. En su defecto, ir a *Pull requests > New* con **base:** `develop` y **compare:** `feature/ISS-...`.
+1. Seleccionar **"Compare & pull request"** en GitHub. En su defecto, ir a *Pull requests > New* con **base:** `develop` y **compare:** `feat/ISS-...`.
 2. **Título:** `feat(ui): Sección de industrias - ISS-6`
 3. **Descripción** (plantilla `.github/pull_request_template.md`):
 
@@ -383,7 +636,8 @@ Fixes #___ / Related to #___
 ## Lista de verificación
 - [ ] Autorrevisión realizada
 - [ ] Sin secretos ni archivos generados en el diff
-- [ ] Pruebas o validación manual
+- [ ] Pruebas unitarias incluidas (ver [Estrategia de testing](#estrategia-de-testing))
+- [ ] Verificaciones de CI y CodeQL en estado exitoso
 - [ ] Documentación actualizada (README de la aplicación)
 ```
 
@@ -411,7 +665,7 @@ Referencia: [Vincular un PR a un issue — GitHub Docs](https://docs.github.com/
 |---|---|
 | Lógica | Cumple lo solicitado en el issue y sus criterios de aceptación |
 | Calidad | Estilo consistente, nomenclatura clara, sin código obsoleto |
-| Pruebas | Pruebas aprobadas o validación manual documentada; cobertura de casos límite |
+| Pruebas | Pruebas unitarias incluidas y aprobadas en CI; cobertura de casos límite (ver [Estrategia de testing](#estrategia-de-testing)) |
 | Seguridad | Ausencia de credenciales en el código, validación de entradas, sin archivos `.env` en el diff |
 | Rendimiento | Consultas y llamadas a APIs externas (Planet, Sentinel Hub, ArcGIS) con límites y paginación |
 | GIS | CRS explícito, geometrías válidas, tratamiento de multipolígonos |
@@ -423,7 +677,7 @@ Referencia: [Vincular un PR a un issue — GitHub Docs](https://docs.github.com/
 
 ```bash
 # Conflictos con develop
-git checkout feature/ISS-123-x
+git checkout feat/ISS-123-x
 git fetch origin && git merge origin/develop
 # resolver los archivos señalados y continuar:
 git add <archivos> && git commit -m "chore: resolver conflictos con develop"
@@ -435,6 +689,15 @@ git push --force-with-lease
 ```
 
 Los PR de gran tamaño deben dividirse en entregas incrementales.
+
+**Funcionalidades de apoyo en GitHub:**
+- **Draft PR:** para trabajo en curso; los revisores se asignan cuando se marca como *Ready for review*.
+- **Auto-merge:** integra el PR automáticamente cuando reúne las aprobaciones y verificaciones; solo para PR no críticos.
+- **GitHub CLI (opcional):**
+  ```bash
+  gh pr create --base develop --title "feat(auth): validar login - ISS-123" --body "Related to #123"
+  gh pr status
+  ```
 
 ## C.5 Despliegue
 
@@ -449,7 +712,7 @@ Los PR de gran tamaño deben dividirse en entregas incrementales.
    git push origin v1.4.0
    ```
    En GitHub, seleccionar **Releases > Draft a new release**, elegir el tag y utilizar **Generate release notes**.
-4. Ejecutar el despliegue según el procedimiento de la aplicación (automatizado o manual, ver [Parte D](#parte-d--manual-por-aplicación)).
+4. Verificar el despliegue: la integración en `main` dispara el pipeline de CI/CD (ver [CI/CD con GitHub Actions](#cicd-con-github-actions)). Las aplicaciones sin pipeline siguen el procedimiento descrito en la [Parte D](#parte-d--manual-por-aplicación).
 5. Realizar la verificación posterior al despliegue (*smoke test*) y cerrar los issues incluidos.
 
 ### C.5.2 Versionamiento (SemVer)
@@ -476,8 +739,23 @@ git push -u origin hotfix/ISS-789-descripcion
 
 1. Abrir un PR hacia **`main`** con el título `HOTFIX(scope): descripción - ISS-789`.
 2. Asignar las etiquetas `hotfix` y `critical`. El revisor es el líder técnico, con un tiempo máximo de revisión de 30 minutos.
-3. La descripción debe incluir el problema, la solución, las pruebas, el impacto (sistemas y usuarios) y el **plan de reversión**.
-4. Integrar, crear el tag de **PARCHE** (`v1.4.3`), desplegar y aplicar monitoreo reforzado.
+3. La descripción debe incluir el problema, la solución, las pruebas, el impacto (sistemas y usuarios) y el **plan de reversión**:
+   ```markdown
+   ## HOTFIX CRÍTICO
+   ### Problema
+   ### Issue relacionado
+   Fixes #___ (CRITICAL)
+   ### Solución implementada
+   ### Pruebas de emergencia
+   - [ ] Pruebas de la corrección aprobadas
+   - [ ] Flujo crítico verificado, sin regresiones
+   ### Impacto
+   - Sistemas afectados:
+   - Usuarios impactados:
+   - Tiempo de indisponibilidad esperado:
+   ### Plan de reversión
+   ```
+4. Integrar (el pipeline despliega a producción), crear el tag de **PARCHE** (`v1.4.3`) y aplicar monitoreo reforzado.
 5. **Sincronizar `develop` de forma obligatoria:**
    ```bash
    git checkout develop && git pull
@@ -732,6 +1010,8 @@ python src/run.py
 | Dependencias Python | `sh-ott` sin `requirements.txt` | Generar `requirements.txt` o `pyproject.toml` por módulo |
 | Archivos generados versionados | `__pycache__/` en `sh-ott` | Eliminarlos e incluirlos en `.gitignore` |
 | Releases y tags | Sin uso | Aplicar SemVer (C.5.2) a partir de la siguiente entrega |
+| Nomenclatura de repositorios | `team-progress`, `sh-ott` y `landing-page-web-v2-mockup` no siguen el formato `<aplicacion>-<capa>` | Renombrarlos según la [Estrategia de naming](#estrategia-de-naming-de-repositorios) (GitHub redirige las URL anteriores) |
+| Code scanning | No habilitado | Incorporar el workflow de CodeQL y Dependabot en cada repositorio de aplicación |
 
 ## E.4 Ajustes respecto a la versión anterior del documento
 
@@ -739,6 +1019,9 @@ python src/run.py
 - La numeración de pasos presentaba saltos (1 a 4); se reorganizó en la Parte C.
 - Las plantillas de issue y la asignación automática se describían como activas sin estar configuradas; se registran como estado objetivo en B.2 y E.3.
 - Los ejemplos en inglés se tradujeron y adaptaron a los repositorios reales.
+- Se incorporó la sección [Flujo de Trabajo Completo de Factory](#flujo-de-trabajo-completo-de-factory): roles, nomenclatura de repositorios, modelo de ramas y estrategia de testing con CodeQL y CI/CD en GitHub Actions.
+- La nomenclatura de ramas se unificó con los prefijos de Conventional Commits (`feat/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`, `hotfix/`), en reemplazo de `feature/`, `bugfix/` y `task/`.
+- Se eliminó el contenido duplicado del flujo anterior (triaje, desarrollo, PR y hotfix), consolidado en la Parte C.
 
 ---
 
