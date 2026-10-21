@@ -463,9 +463,9 @@ El tablero https://github.com/orgs/procalculoFactory/projects/1 consolida los is
 | [`team-progress`](https://github.com/procalculoFactory/team-progress) | Tablero de resultados de la Fábrica ("FABRICA 2025") | HTML | Pública | GitHub Pages | @procalculoFactoryLeader |
 | [`prisma-agro-desktop`](https://github.com/procalculoFactory/prisma-agro-desktop) | Add-in de ArcGIS Pro para Prisma Agro (mosaico multidimensional NGRDI) | C#, .NET 8, WPF, ArcGIS Pro SDK | Pública | Archivo `.esriAddinX` | @bbohorquezs / @procalculoFactoryLeader |
 | [`sh-ott`](https://github.com/procalculoFactory/sh-ott) | Herramientas Python de Sentinel Hub: áreas quemadas, deforestación y descarga de polígonos por índice | Python, sentinelhub-py, GeoPandas | Pública (ver E.2) | Ejecución local | Por definir |
-| **ABACO** *(repositorio privado)* | Sistema de monitoreo de deforestación en producción | AWS | Privada | AWS (CloudFront) | Por completar |
-| **Prisma API** *(repositorio privado)* | API de análisis de imágenes satelitales en producción | AWS | Privada | AWS | Por completar |
-| **Mapas.co** *(repositorio privado)* | Plataforma web geoespacial | AWS | Privada | AWS | Por completar |
+| **ABACO** *(repositorio privado)* | Sistema de monitoreo de deforestación en producción | AWS | Privada | AWS (CloudFront) | @procalculoFactoryLeader |
+| **Prisma API** *(repositorio privado)* | API de análisis de imágenes satelitales en producción | AWS | Privada | AWS | @procalculoFactoryLeader |
+| **Mapas.co** *(repositorio privado)* | Plataforma web geoespacial | AWS | Privada | AWS | @procalculoFactoryLeader |
 
 > **Nota:** la información de los repositorios privados se completará una vez verificado su contenido. Ver [E.1](#e1-información-pendiente).
 
