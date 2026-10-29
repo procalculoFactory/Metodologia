@@ -22,9 +22,19 @@ El presente manual constituye la referencia oficial de los procesos de la Fábri
 - [Estructura del equipo](#estructura-del-equipo)
 - [Flujo de Trabajo Completo de Factory](#flujo-de-trabajo-completo-de-factory)
   - [Roles y responsabilidades](#roles-y-responsabilidades)
+    - [Team Leader Fullstack](#team-leader-fullstack)
+    - [Frontend Senior](#frontend-senior)
+    - [Backend Senior](#backend-senior)
+    - [Junior Developer](#junior-developer)
   - [Estrategia de naming de repositorios](#estrategia-de-naming-de-repositorios)
   - [Estrategia de branching](#estrategia-de-branching)
+    - [Ramas permanentes](#ramas-permanentes)
+    - [Ramas de trabajo (una por cada modificación)](#ramas-de-trabajo-una-por-cada-modificación)
+    - [Flujo resumido](#flujo-resumido)
   - [Estrategia de testing](#estrategia-de-testing)
+    - [Pirámide de testing](#pirámide-de-testing)
+    - [Code Scanning con GitHub Actions](#code-scanning-con-github-actions)
+    - [CI/CD con GitHub Actions](#cicd-con-github-actions)
 - [Parte A — Guía de GitHub para la gerencia](#parte-a--guía-de-github-para-la-gerencia)
   - [A.1 Conceptos fundamentales](#a1-conceptos-fundamentales)
   - [A.2 Consulta del historial de cambios (commits)](#a2-consulta-del-historial-de-cambios-commits)
@@ -35,10 +45,94 @@ El presente manual constituye la referencia oficial de los procesos de la Fábri
   - [A.7 Rutina semanal de seguimiento](#a7-rutina-semanal-de-seguimiento)
   - [A.8 Glosario](#a8-glosario)
 - [Parte B — Mapa de la organización](#parte-b--mapa-de-la-organización)
+  - [B.1 Repositorios](#b1-repositorios)
+  - [B.2 Asignación automática por tipo de tarea (estado objetivo)](#b2-asignación-automática-por-tipo-de-tarea-estado-objetivo)
 - [Parte C — Ciclo de vida de una tarea: creación, revisión y despliegue](#parte-c--ciclo-de-vida-de-una-tarea-creación-revisión-y-despliegue)
+  - [C.1 Creación](#c1-creación)
+    - [C.1.1 Triaje semanal (lunes 9:00 a. m.), a cargo del líder técnico](#c11-triaje-semanal-lunes-900-a-m-a-cargo-del-líder-técnico)
+  - [C.2 Desarrollo](#c2-desarrollo)
+    - [C.2.1 Asunción de la tarea](#c21-asunción-de-la-tarea)
+    - [C.2.2 Preparación de develop y creación de la rama](#c22-preparación-de-develop-y-creación-de-la-rama)
+    - [C.2.3 Commits](#c23-commits)
+  - [C.3 Apertura del Pull Request](#c3-apertura-del-pull-request)
+  - [C.4 Revisión de código (Code Review)](#c4-revisión-de-código-code-review)
+  - [C.5 Despliegue](#c5-despliegue)
+    - [C.5.1 Flujo regular (release)](#c51-flujo-regular-release)
+    - [C.5.2 Versionamiento (SemVer)](#c52-versionamiento-semver)
+    - [C.5.3 Hotfix (incidente en producción)](#c53-hotfix-incidente-en-producción)
+    - [C.5.4 Reglas de cumplimiento obligatorio](#c54-reglas-de-cumplimiento-obligatorio)
 - [Parte D — Manual por aplicación](#parte-d--manual-por-aplicación)
+  - [D.1 mapasco-landing-web — Landing page de Mapas CO](#d1-mapasco-landing-web--landing-page-de-mapas-co)
+  - [D.2 landing-page-web-v2-mockup — Prototipo del sitio corporativo v2](#d2-landing-page-web-v2-mockup--prototipo-del-sitio-corporativo-v2)
+  - [D.3 team-progress — Tablero de resultados de la Fábrica](#d3-team-progress--tablero-de-resultados-de-la-fábrica)
+  - [D.4 prisma-agro-desktop — Add-in de ArcGIS Pro (Prisma Agro)](#d4-prisma-agro-desktop--add-in-de-arcgis-pro-prisma-agro)
+  - [D.5 sh-ott — Herramientas Sentinel Hub (quemas, deforestación, polígonos)](#d5-sh-ott--herramientas-sentinel-hub-quemas-deforestación-polígonos)
+  - [D.6 Metodologia — Manual de la Fábrica](#d6-metodologia--manual-de-la-fábrica)
+  - [D.7 Aplicaciones productivas en repositorios privados (ABACO, Prisma API, Mapas.co)](#d7-aplicaciones-productivas-en-repositorios-privados-abaco-prisma-api-mapasco)
+    - [D.7.1 ABACO — Solución de problemas](#d71-abaco--solución-de-problemas)
+      - [Resumen](#resumen)
+      - [Requisitos previos](#requisitos-previos)
+      - [1. Reemplazar un informe (PDF) subido por error](#1-reemplazar-un-informe-pdf-subido-por-error)
+      - [2. Reemplazar la geometría de una solicitud](#2-reemplazar-la-geometría-de-una-solicitud)
+      - [3. Errores comunes y cómo resolverlos](#3-errores-comunes-y-cómo-resolverlos)
+      - [4. Operaciones generales desde Django shell (consultar, modificar, crear, eliminar)](#4-operaciones-generales-desde-django-shell-consultar-modificar-crear-eliminar)
+      - [5. Notas operativas](#5-notas-operativas)
+    - [D.7.2 ABACO — Alertas de costos S3 con CloudWatch](#d72-abaco--alertas-de-costos-s3-con-cloudwatch)
+      - [Resumen](#resumen-1)
+      - [Componentes](#componentes)
+      - [Configuración Manual via AWS Console](#configuración-manual-via-aws-console)
+      - [Configuración Programática via AWS SDK](#configuración-programática-via-aws-sdk)
+      - [Management Command de Django](#management-command-de-django)
+      - [Integración con Django](#integración-con-django)
+      - [Notificaciones por Email](#notificaciones-por-email)
+      - [Verificación de Configuración](#verificación-de-configuración)
+      - [Costos de CloudWatch](#costos-de-cloudwatch)
+      - [Monitoreo Proactivo](#monitoreo-proactivo)
+      - [Mejores Prácticas](#mejores-prácticas)
+      - [Troubleshooting](#troubleshooting)
+    - [D.7.3 ABACO — Último informe de testing de la API](#d73-abaco--último-informe-de-testing-de-la-api)
+      - [1. Contexto](#1-contexto)
+      - [2. Configuración del entorno de pruebas](#2-configuración-del-entorno-de-pruebas)
+      - [3. Archivos de test creados](#3-archivos-de-test-creados)
+      - [4. Resultados de la suite](#4-resultados-de-la-suite)
+      - [5. Bugs identificados](#5-bugs-identificados)
+      - [6. Resumen de correcciones](#6-resumen-de-correcciones)
+      - [7. Archivos modificados](#7-archivos-modificados)
+      - [8. Próximos pasos recomendados](#8-próximos-pasos-recomendados)
+    - [D.7.4 Mapas.co — Manual de solución de problemas recurrentes](#d74-mapasco--manual-de-solución-de-problemas-recurrentes)
+      - [1. Servicio mapasco.service caído](#1-servicio-mapascoservice-caído)
+      - [2. Estilos del panel admin no cargan](#2-estilos-del-panel-admin-no-cargan)
+      - [3. precio_unitario_cmc es NULL en cotizaciones](#3-precio_unitario_cmc-es-null-en-cotizaciones)
+      - [4. Catálogo Salesforce desactualizado](#4-catálogo-salesforce-desactualizado)
+      - [5. Rectificar un descuento de créditos incorrecto](#5-rectificar-un-descuento-de-créditos-incorrecto)
+      - [6. Conectarse a la base de datos desde DBeaver](#6-conectarse-a-la-base-de-datos-desde-dbeaver)
+      - [7. Usuarios no pueden acceder a mapas.co](#7-usuarios-no-pueden-acceder-a-mapasco)
+      - [8. Exportar datos a CSV](#8-exportar-datos-a-csv)
+      - [9. Comandos de referencia rápida](#9-comandos-de-referencia-rápida)
+  - [D.8 Control de datos con Django shell (Mapas.co y ABACO)](#d8-control-de-datos-con-django-shell-mapasco-y-abaco)
+    - [D.8.1 Acceder al contenedor / servidor](#d81-acceder-al-contenedor--servidor)
+    - [D.8.2 Abrir el shell de Django](#d82-abrir-el-shell-de-django)
+    - [D.8.3 Descubrir modelos y campos](#d83-descubrir-modelos-y-campos)
+    - [D.8.4 Consultas de usuarios](#d84-consultas-de-usuarios)
+    - [D.8.5 Consultas de uso de la API](#d85-consultas-de-uso-de-la-api)
+    - [D.8.6 Filtros por fechas y agrupaciones](#d86-filtros-por-fechas-y-agrupaciones)
+    - [D.8.7 Consultas de créditos (wallet)](#d87-consultas-de-créditos-wallet)
+    - [D.8.8 Consultas espaciales (PostGIS)](#d88-consultas-espaciales-postgis)
+    - [D.8.9 SQL directo](#d89-sql-directo)
+    - [D.8.10 Exportar resultados a CSV](#d810-exportar-resultados-a-csv)
+    - [D.8.11 Buenas prácticas y seguridad](#d811-buenas-prácticas-y-seguridad)
+    - [D.8.12 Chuleta rápida](#d812-chuleta-rápida)
+  - [D.9 Plantilla por aplicación](#d9-plantilla-por-aplicación)
+  - [D.10 Lineamientos de despliegue (AWS)](#d10-lineamientos-de-despliegue-aws)
+  - [D.11 Incidencias frecuentes transversales (AWS)](#d11-incidencias-frecuentes-transversales-aws)
 - [Parte E — Hallazgos y mejoras pendientes](#parte-e--hallazgos-y-mejoras-pendientes)
+  - [E.1 Información pendiente](#e1-información-pendiente)
+  - [E.2 Seguridad: acciones inmediatas](#e2-seguridad-acciones-inmediatas)
+  - [E.3 Configuración faltante en los repositorios](#e3-configuración-faltante-en-los-repositorios)
 - [Bibliografía y referencias](#bibliografía-y-referencias)
+  - [Git y GitHub (documentación oficial)](#git-y-github-documentación-oficial)
+  - [Libros y metodologías](#libros-y-metodologías)
+  - [Tecnologías de las aplicaciones](#tecnologías-de-las-aplicaciones)
 
 ---
 
@@ -939,10 +1033,12 @@ python src/run.py
 
 ## D.7 Aplicaciones productivas en repositorios privados (ABACO, Prisma API, Mapas.co)
 
-## ABACO - Solución de problemas 
-# Gestión de Informes y Geometrías de Solicitudes Geográficas — Guía Operativa
+Esta sección reúne los manuales operativos de las aplicaciones productivas: solución de problemas de ABACO (D.7.1), alertas de costos S3 (D.7.2), el último informe de testing de la API de ABACO (D.7.3) y los problemas recurrentes de Mapas.co (D.7.4). Las consultas de datos para reportes se documentan en [D.8](#d8-control-de-datos-con-django-shell-mapasco-y-abaco).
 
-## Resumen
+### D.7.1 ABACO — Solución de problemas
+**Gestión de Informes y Geometrías de Solicitudes Geográficas — Guía Operativa**
+
+#### Resumen
 
 Esta guía cubre operaciones de soporte sobre una `GeographicRequest` (solicitud TIP/CUE) ya creada, y el manejo general de registros por Django shell:
 
@@ -955,9 +1051,9 @@ Aplica a solicitudes de cualquier compañía/entorno. Los ejemplos usan la solic
 
 ---
 
-## Requisitos previos
+#### Requisitos previos
 
-### Autenticarse para usar la API (Postman o curl)
+##### Autenticarse para usar la API (Postman o curl)
 
 ```
 POST https://abaco.procalculo.com/back/api/token/
@@ -970,7 +1066,7 @@ Body (raw JSON):
 
 De la respuesta, copia `"access"` — es el token que va en el header `Authorization: Bearer <token>` de todos los requests siguientes.
 
-### Acceso directo (soporte/admin, vía Django shell)
+##### Acceso directo (soporte/admin, vía Django shell)
 
 Para los casos que no tienen un endpoint de API (como reemplazar geometría), se usa el shell de Django directamente en el servidor:
 
@@ -981,11 +1077,11 @@ python manage.py shell
 
 ---
 
-## 1. Reemplazar un informe (PDF) subido por error
+#### 1. Reemplazar un informe (PDF) subido por error
 
 El sistema **bloquea subir un archivo nuevo si ya existe uno** (`upload_attachment` responde `409 Conflict`: *"Esta solicitud ya tiene un archivo adjunto. Elimina el existente antes de subir uno nuevo."*). Por eso el reemplazo siempre son dos pasos: borrar, luego subir.
 
-### 1.1 Encontrar el `attachment_id` del archivo a borrar
+##### 1.1 Encontrar el `attachment_id` del archivo a borrar
 
 Si no lo tienes a mano:
 
@@ -996,7 +1092,7 @@ Headers: Authorization: Bearer <token>
 
 En la respuesta, busca en `"attachments"` el objeto cuyo `"filename"` coincide con el archivo a reemplazar, y copia su `"id"`.
 
-### 1.2 Borrar el adjunto viejo
+##### 1.2 Borrar el adjunto viejo
 
 ```
 DELETE https://abaco.procalculo.com/back/api/geographic-requests/{ID_SOLICITUD}/delete_attachment/?attachment_id={ATTACHMENT_ID}
@@ -1017,7 +1113,7 @@ Respuesta esperada:
 
 Esto borra el archivo de S3 **y** del almacenamiento local, limpia el campo `attachment` del modelo, y deja un registro de auditoría en `additional_metadata.deleted_attachments` (quién y cuándo lo borró).
 
-### 1.3 Subir el archivo nuevo
+##### 1.3 Subir el archivo nuevo
 
 ```
 POST https://abaco.procalculo.com/back/api/geographic-requests/{ID_SOLICITUD}/upload_attachment/
@@ -1032,7 +1128,7 @@ Requisitos del archivo:
 
 Respuesta esperada: `"status": "success"`, con el detalle del nuevo adjunto (`id`, `s3_key`, `size_mb`, etc.).
 
-### 1.4 Alternativa — vía Django shell (cuando no se tiene el archivo accesible por Postman)
+##### 1.4 Alternativa — vía Django shell (cuando no se tiene el archivo accesible por Postman)
 
 Si el soporte técnico tiene el archivo nuevo directamente en el servidor (ej. en `docs/`), puede hacerse igual, pero por API usando un token generado desde el shell — **no editar el campo `attachment` directamente en base de datos**, porque eso no limpia S3 ni el `additional_metadata`:
 
@@ -1058,11 +1154,11 @@ curl -X POST "https://abaco.procalculo.com/back/api/geographic-requests/{ID}/upl
 
 ---
 
-## 2. Reemplazar la geometría de una solicitud
+#### 2. Reemplazar la geometría de una solicitud
 
 **No existe un endpoint de API para esto** — se hace por Django shell, y requiere dos pasos: actualizar la geometría en la base de datos, y sincronizarla con ArcGIS Enterprise (si no se sincroniza, el cambio no se ve reflejado en el mapa/portal del cliente).
 
-### 2.1 Actualizar la geometría en base de datos
+##### 2.1 Actualizar la geometría en base de datos
 
 ```python
 from apps.spatial_requests.models import GeographicRequest
@@ -1076,7 +1172,7 @@ destino.save(update_fields=['geometry'])
 
 > El campo `geometry` es `MultiPolygonField` (admite áreas de una o varias partes no contiguas). Si la geometría nueva viene de otro origen (no de otra solicitud), asegúrate de que sea un objeto `MultiPolygon` o `Polygon` de GEOS en SRID 4326.
 
-### 2.2 Sincronizar con ArcGIS Enterprise
+##### 2.2 Sincronizar con ArcGIS Enterprise
 
 ```python
 from apps.api.utils.arcgis_sync import sync_request_to_arcgis
@@ -1092,7 +1188,7 @@ Respuesta esperada:
 
 > **Importante — usar `sync_request_to_arcgis`, no `sync_request_to_arcgis_Update`.** Esta última función **solo actualiza atributos** (status, fechas) y nunca toca la geometría. Si se usa por error, la función responde `"success"` igualmente pero la geometría en ArcGIS queda sin cambios — es un error silencioso, revisar la sección 3.
 
-### 2.3 Verificar que el cambio llegó a ArcGIS (recomendado)
+##### 2.3 Verificar que el cambio llegó a ArcGIS (recomendado)
 
 ```python
 from apps.environments.models import Environment
@@ -1112,7 +1208,7 @@ Compara el número de anillos y de puntos con `len(destino.geometry)` (número d
 
 ---
 
-## 3. Errores comunes y cómo resolverlos
+#### 3. Errores comunes y cómo resolverlos
 
 | Error | Dónde aparece | Causa | Solución |
 |---|---|---|---|
@@ -1132,7 +1228,7 @@ Compara el número de anillos y de puntos con `len(destino.geometry)` (número d
 
 ---
 
-## 4. Operaciones generales desde Django shell (consultar, modificar, crear, eliminar)
+#### 4. Operaciones generales desde Django shell (consultar, modificar, crear, eliminar)
 
 Esta sección cubre el manejo genérico de registros desde `python manage.py shell` — útil para cualquier modelo, no solo `GeographicRequest`. Úsalo cuando no exista un endpoint de API para lo que necesitas hacer.
 
@@ -1141,7 +1237,7 @@ cd /home/ubuntu/abaco-api/abacoBe
 python manage.py shell
 ```
 
-### 4.1 Buscar/consultar registros
+##### 4.1 Buscar/consultar registros
 
 ```python
 from apps.spatial_requests.models import GeographicRequest
@@ -1163,7 +1259,7 @@ for r in pendientes:
 
 > Usa `.get()` cuando esperas **un solo** resultado (falla si hay 0 o más de 1). Usa `.filter()` cuando esperas **varios o ninguno**.
 
-### 4.2 Modificar (actualizar) un registro existente
+##### 4.2 Modificar (actualizar) un registro existente
 
 ```python
 req = GeographicRequest.objects.get(id=71)
@@ -1180,7 +1276,7 @@ Para modificar **muchos registros a la vez** sin traerlos uno por uno a Python, 
 GeographicRequest.objects.filter(company_id=18, status="pendiente").update(priority=1)
 ```
 
-### 4.3 Crear un registro nuevo
+##### 4.3 Crear un registro nuevo
 
 ```python
 from apps.users.models import Company
@@ -1201,7 +1297,7 @@ print(nuevo.id)
 
 > Los campos obligatorios dependen del modelo — si falta alguno requerido sin `default`, Django lanza `IntegrityError` al guardar. Revisa `models.py` del modelo en cuestión antes de crear registros a mano.
 
-### 4.4 Eliminar un registro
+##### 4.4 Eliminar un registro
 
 ```python
 req = GeographicRequest.objects.get(id=999)
@@ -1216,7 +1312,7 @@ GeographicRequest.objects.filter(status="cancelado", company_id=18).delete()
 
 > **`delete()` es irreversible y en cascada** — borra también los objetos relacionados que tengan `on_delete=models.CASCADE` apuntando a este registro (revisa el modelo para saber qué más se va a borrar). Para `GeographicRequest`, `delete()` **no** limpia los archivos en S3 ni en ArcGIS — eso hay que hacerlo aparte (ver sección 1.2 para adjuntos; para el feature en ArcGIS, borrarlo manualmente vía `layer.edit_features(deletes=[object_id])`).
 
-### 4.5 Buenas prácticas para cualquier cambio manual por shell
+##### 4.5 Buenas prácticas para cualquier cambio manual por shell
 
 - **Backup antes de tocar datos en producción** (ver sección 5).
 - Probar primero con `.filter(...)` y `.count()` / `print(list(...))` para confirmar que el filtro trae exactamente los registros esperados, **antes** de encadenar `.update()` o `.delete()`.
@@ -1234,7 +1330,7 @@ GeographicRequest.objects.filter(status="cancelado", company_id=18).delete()
 
 ---
 
-## 5. Notas operativas
+#### 5. Notas operativas
 
 - Siempre generar el token con la cuenta del **operador asignado** a la solicitud quien hace la operación — algunos endpoints validan que el operador autenticado sea el asignado (`list_attachments`), aunque `delete_attachment`/`upload_attachment` aceptan cualquier usuario autenticado.
 - Antes de cualquier cambio directo en base de datos (geometría, adjuntos, migraciones de esquema), tomar un respaldo:
@@ -1250,34 +1346,34 @@ GeographicRequest.objects.filter(status="cancelado", company_id=18).delete()
   Si hace falta un reinicio completo (ej. cambios en variables de entorno): `sudo systemctl restart abaco.service`. Sin este paso, un error "ya corregido" en el código puede seguir reproduciéndose en producción porque los workers activos siguen ejecutando la versión vieja.
 
 
-### Configuración de AWS CloudWatch 
+### D.7.2 ABACO — Alertas de costos S3 con CloudWatch
 
-# CloudWatch Alerts para Costos S3 - Configuración
+**CloudWatch Alerts para Costos S3 - Configuración**
 
-## Resumen
+#### Resumen
 
 Configuración de alertas de Amazon CloudWatch para monitorear y alertar cuando los costos proyectados de S3 exceden umbrales configurables por cliente.
 
-## Componentes
+#### Componentes
 
-### 1. CloudWatch Metrics
+##### 1. CloudWatch Metrics
 
 AWS CloudWatch Billing Metrics debe estar habilitado para monitorear costos de S3.
 
-### 2. Alertas por Bucket (Por Cliente)
+##### 2. Alertas por Bucket (Por Cliente)
 
 Cada cliente puede tener alertas independientes basadas en sus propios umbrales de costo.
 
-## Configuración Manual via AWS Console
+#### Configuración Manual via AWS Console
 
-### Paso 1: Habilitar Billing Metrics
+##### Paso 1: Habilitar Billing Metrics
 
 1. Ir a AWS Console → Billing Dashboard
 2. Preferences → Cost Explorer Preferences
 3. Habilitar "Receive Billing Alerts"
 4. Habilitar "Cost and Usage Reports"
 
-### Paso 2: Crear Alarma de CloudWatch por Bucket
+##### Paso 2: Crear Alarma de CloudWatch por Bucket
 
 Para cada bucket de cliente (`abaco-{company_id}-{environment_type}`):
 
@@ -1307,7 +1403,7 @@ Para cada bucket de cliente (`abaco-{company_id}-{environment_type}`):
    Description: Alerta cuando bucket excede 100 GB
    ```
 
-### Paso 3: Crear Alarma de Costo Estimado
+##### Paso 3: Crear Alarma de Costo Estimado
 
 1. **Seleccionar Métrica de Billing**:
    - Service: AWS/Billing
@@ -1324,9 +1420,9 @@ Para cada bucket de cliente (`abaco-{company_id}-{environment_type}`):
    Period: 6 hours (verificar cada 6 horas)
    ```
 
-## Configuración Programática via AWS SDK
+#### Configuración Programática via AWS SDK
 
-### Script de Configuración
+##### Script de Configuración
 
 ```python
 import boto3
@@ -1411,7 +1507,7 @@ if __name__ == '__main__':
     )
 ```
 
-## Management Command de Django
+#### Management Command de Django
 
 Agregar a `apps/api/management/commands/configure_s3_alerts.py`:
 
@@ -1481,9 +1577,9 @@ class Command(BaseCommand):
         pass
 ```
 
-## Integración con Django
+#### Integración con Django
 
-### Modelo para Configuración de Alertas
+##### Modelo para Configuración de Alertas
 
 Agregar a `apps/environments/models.py`:
 
@@ -1512,9 +1608,9 @@ class S3CostAlert(models.Model):
         return f"Alert for {self.environment.company.user.name} (${self.threshold_usd})"
 ```
 
-## Notificaciones por Email
+#### Notificaciones por Email
 
-### Template de Email de Alerta
+##### Template de Email de Alerta
 
 Crear `apps/config/templates/emails/s3_cost_alert.html`:
 
@@ -1576,9 +1672,9 @@ Crear `apps/config/templates/emails/s3_cost_alert.html`:
 </html>
 ```
 
-## Verificación de Configuración
+#### Verificación de Configuración
 
-### Script de Verificación
+##### Script de Verificación
 
 ```bash
 # Listar alarmas existentes
@@ -1600,7 +1696,7 @@ aws sns publish \
   --message "Test alert from Abaco API"
 ```
 
-## Costos de CloudWatch
+#### Costos de CloudWatch
 
 - **Alarmas**: $0.10 USD por alarma/mes (primeras 10 gratis)
 - **Métricas personalizadas**: $0.30 por métrica/mes
@@ -1608,9 +1704,9 @@ aws sns publish \
 
 **Ejemplo**: 50 clientes con 2 alarmas cada uno = 100 alarmas × $0.10 = $10 USD/mes
 
-## Monitoreo Proactivo
+#### Monitoreo Proactivo
 
-### Dashboard de CloudWatch
+##### Dashboard de CloudWatch
 
 Crear dashboard centralizado con widgets para:
 
@@ -1620,7 +1716,7 @@ Crear dashboard centralizado con widgets para:
 4. **Tendencia de crecimiento (últimos 30 días)**
 5. **Alertas activas**
 
-### Script de Dashboard
+##### Script de Dashboard
 
 ```python
 cloudwatch = boto3.client('cloudwatch')
@@ -1648,7 +1744,7 @@ cloudwatch.put_dashboard(
 )
 ```
 
-## Mejores Prácticas
+#### Mejores Prácticas
 
 1. **Alertas Graduales**:
    - Warning a 80% del umbral
@@ -1666,36 +1762,36 @@ cloudwatch.put_dashboard(
    - Probar alertas antes de producción
    - Verificar que emails llegan correctamente
 
-## Troubleshooting
+#### Troubleshooting
 
-### Alertas no se disparan
+##### Alertas no se disparan
 
 - Verificar que Billing Metrics está habilitado
 - Revisar permisos IAM para CloudWatch
 - Confirmar que SNS topic tiene suscriptores
 
-### Emails no llegan
+##### Emails no llegan
 
 - Verificar suscripción SNS confirmada
 - Revisar spam/junk
 - Verificar límites de envío SES si aplica
 
-### Métricas no disponibles
+##### Métricas no disponibles
 
 - Billing metrics pueden tardar 24h en aparecer
 - Verificar región correcta (us-east-1 para billing)
 - Confirmar que bucket tiene actividad
 
 
-### Ulitmo Informe de testing 
-# Informe de Testing y Corrección de Bugs — API Ábaco
+### D.7.3 ABACO — Último informe de testing de la API
+**Informe de Testing y Corrección de Bugs — API Ábaco**
 **Fecha:** 2026-06-04  
 **Rama:** `testing`  
 **Responsable:** Factory Lead  
 
 ---
 
-## 1. Contexto
+#### 1. Contexto
 
 Se realizó una revisión completa de la API REST del backend de Ábaco con el objetivo de:
 
@@ -1707,9 +1803,9 @@ El stack bajo prueba es **Django 4.2 + Django REST Framework + PostGIS**, con se
 
 ---
 
-## 2. Configuración del entorno de pruebas
+#### 2. Configuración del entorno de pruebas
 
-### Base de datos local (Docker)
+##### Base de datos local (Docker)
 
 Se creó un contenedor Docker con **PostgreSQL 16 + PostGIS 3.4** para aislar completamente el entorno de pruebas de cualquier base de datos compartida.
 
@@ -1727,7 +1823,7 @@ El script de inicialización crea automáticamente dos bases de datos:
 
 Ambas con la extensión **PostGIS** habilitada.
 
-### Configuración de pytest
+##### Configuración de pytest
 
 - **Settings:** `config.settings.testing`
 - **Migraciones desactivadas** (`DisableMigrations`) — esquema creado desde modelos directamente.
@@ -1735,7 +1831,7 @@ Ambas con la extensión **PostGIS** habilitada.
 - **Hashing de contraseñas:** MD5 (más rápido en tests).
 - **ArcGIS y notificaciones:** desactivados a nivel de settings; adicionalmente mockeados con `unittest.mock.patch` en cada test que los requiere.
 
-### Comando de ejecución
+##### Comando de ejecución
 
 ```bash
 # Levantar la base de datos (primera vez o tras reinicio)
@@ -1755,7 +1851,7 @@ conda run -n abaco39_fixed python -m pytest \
 
 ---
 
-## 3. Archivos de test creados
+#### 3. Archivos de test creados
 
 | Archivo | Descripción |
 |---|---|
@@ -1778,17 +1874,17 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 
 ---
 
-## 4. Resultados de la suite
+#### 4. Resultados de la suite
 
-### Resumen final
+##### Resumen final
 
 ```
 87 tests  |  87 PASSED  |  0 FAILED  |  Tiempo: 4.45s
 ```
 
-### Detalle por módulo
+##### Detalle por módulo
 
-#### 4.1 `test_auth_endpoints.py` — 10 tests
+###### 4.1 `test_auth_endpoints.py` — 10 tests
 
 | Test | Resultado |
 |---|---|
@@ -1803,7 +1899,7 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 | `test_access_protected_endpoint_without_token` | ✅ PASSED |
 | `test_access_protected_endpoint_with_valid_token` | ✅ PASSED |
 
-#### 4.2 `test_company_viewset.py` — 7 tests
+###### 4.2 `test_company_viewset.py` — 7 tests
 
 | Test | Resultado |
 |---|---|
@@ -1815,7 +1911,7 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 | `test_delete_as_admin` | ✅ PASSED |
 | `test_delete_as_company_forbidden` | ✅ PASSED |
 
-#### 4.3 `test_operator_viewset.py` — 7 tests
+###### 4.3 `test_operator_viewset.py` — 7 tests
 
 | Test | Resultado |
 |---|---|
@@ -1827,7 +1923,7 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 | `test_create_operator_as_admin` | ✅ PASSED |
 | `test_delete_operator_as_admin` | ✅ PASSED |
 
-#### 4.4 `test_environment_viewset.py` — 12 tests
+###### 4.4 `test_environment_viewset.py` — 12 tests
 
 | Test | Resultado |
 |---|---|
@@ -1846,7 +1942,7 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 | `test_create_environment_missing_geodatabase` | ✅ PASSED |
 | `test_create_environment_as_company_forbidden` | ✅ PASSED |
 
-#### 4.5 `test_geographic_requests_crud.py` — 14 tests
+###### 4.5 `test_geographic_requests_crud.py` — 14 tests
 
 | Test | Resultado |
 |---|---|
@@ -1866,7 +1962,7 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 | `test_filter_by_status` | ✅ PASSED |
 | `test_filter_by_request_type` | ✅ PASSED |
 
-#### 4.6 `test_geographic_requests_actions.py` — 24 tests
+###### 4.6 `test_geographic_requests_actions.py` — 24 tests
 
 | Test | Resultado |
 |---|---|
@@ -1895,7 +1991,7 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 | `test_sync_to_arcgis_as_company` | ✅ PASSED |
 | `test_sync_to_arcgis_unauthenticated` | ✅ PASSED |
 
-#### 4.7 `test_analytical_service_viewset.py` — 13 tests
+###### 4.7 `test_analytical_service_viewset.py` — 13 tests
 
 | Test | Resultado |
 |---|---|
@@ -1912,11 +2008,11 @@ Adicionalmente se extendió `apps/api/tests/conftest.py` con los siguientes fixt
 
 ---
 
-## 5. Bugs identificados
+#### 5. Bugs identificados
 
 Durante la escritura de los tests se identificaron **7 bugs**. A continuación se describen todos, indicando cuáles fueron corregidos en esta sesión.
 
-### Bug #1 — `get_permissions()` ignora los decoradores `@action(permission_classes=[...])`
+##### Bug #1 — `get_permissions()` ignora los decoradores `@action(permission_classes=[...])`
 **Severidad:** 🔴 Crítico (seguridad)  
 **Archivo:** `apps/api/views.py` — `GeographicRequestViewSet.get_permissions()`  
 **Estado:** ⚠️ Pendiente de corrección
@@ -1941,7 +2037,7 @@ elif self.action in ["my_assigned_requests"]:
 
 ---
 
-### Bug #2 — Contraseña ArcGIS expuesta en respuesta de `my_assigned_requests`
+##### Bug #2 — Contraseña ArcGIS expuesta en respuesta de `my_assigned_requests`
 **Severidad:** 🔴 Crítico (seguridad)  
 **Archivo:** `apps/api/views.py` — `GeographicRequestViewSet.my_assigned_requests()`  
 **Estado:** ⚠️ Pendiente de corrección
@@ -1953,7 +2049,7 @@ El campo `operator_password` (credencial del portal ArcGIS) se incluye en el JSO
 
 ---
 
-### Bug #3 — Inconsistencia de rollback entre `mark_as_completed` y `mark_as_in_progress`
+##### Bug #3 — Inconsistencia de rollback entre `mark_as_completed` y `mark_as_in_progress`
 **Severidad:** 🟠 Alto  
 **Archivos:** `apps/api/views.py` (líneas 1899 y 1983)  
 **Estado:** ✅ Corregido
@@ -1971,7 +2067,7 @@ Esta inconsistencia podía dejar el sistema en un estado incoherente entre la ba
 
 ---
 
-### Bug #4 — `verification_token` solo se generaba en la vista, no en el modelo
+##### Bug #4 — `verification_token` solo se generaba en la vista, no en el modelo
 **Severidad:** 🟠 Alto  
 **Archivos:** `apps/api/views.py`, `apps/spatial_requests/models.py`  
 **Estado:** ✅ Corregido
@@ -1993,7 +2089,7 @@ La vista fue simplificada: ya no genera ni pasa el token, sino que lo lee del ob
 
 ---
 
-### Bug #5 — Auto-asignación de operador con `id=5` hardcodeado
+##### Bug #5 — Auto-asignación de operador con `id=5` hardcodeado
 **Severidad:** 🟡 Medio  
 **Archivo:** `apps/spatial_requests/models.py` — `GeographicRequest.save()`  
 **Estado:** ✅ Corregido
@@ -2033,7 +2129,7 @@ Si no existe ningún operador, la solicitud queda sin asignar sin lanzar excepci
 
 ---
 
-### Bug #6 — `print()` statements en código de producción
+##### Bug #6 — `print()` statements en código de producción
 **Severidad:** 🟡 Menor  
 **Archivo:** `apps/api/views.py`  
 **Estado:** ✅ Corregido
@@ -2054,7 +2150,7 @@ Todos reemplazados por llamadas a `logger.debug()` o `logger.info()` según corr
 
 ---
 
-### Bug #7 — `test_operator_endpoints.py` ignorado en `pytest.ini`
+##### Bug #7 — `test_operator_endpoints.py` ignorado en `pytest.ini`
 **Severidad:** 🟡 Deuda técnica  
 **Archivo:** `pytest.ini`  
 **Estado:** ⚠️ Pendiente de corrección
@@ -2070,7 +2166,7 @@ Esto deja sin cobertura automática los flujos específicos del operador. Se rec
 
 ---
 
-### Bug #8 — Migration `0012` con campo duplicado
+##### Bug #8 — Migration `0012` con campo duplicado
 **Severidad:** 🟠 Alto (bloqueante en DB nueva)  
 **Archivo:** `apps/environments/migrations/0012_project_operatorenvironment_and_more.py`  
 **Estado:** ✅ Corregido
@@ -2088,7 +2184,7 @@ Se eliminó la operación duplicada de `0012`. Las migraciones ahora corren sin 
 
 ---
 
-## 6. Resumen de correcciones
+#### 6. Resumen de correcciones
 
 | # | Bug | Severidad | Estado |
 |---|---|---|---|
@@ -2103,7 +2199,7 @@ Se eliminó la operación duplicada de `0012`. Las migraciones ahora corren sin 
 
 ---
 
-## 7. Archivos modificados
+#### 7. Archivos modificados
 
 | Archivo | Tipo de cambio |
 |---|---|
@@ -2116,7 +2212,7 @@ Se eliminó la operación duplicada de `0012`. Las migraciones ahora corren sin 
 
 ---
 
-## 8. Próximos pasos recomendados
+#### 8. Próximos pasos recomendados
 
 1. **Corregir Bug #1** — Agregar `tip_requests`, `sync_to_arcgis` y `my_assigned_requests` en `get_permissions()` para que los permisos declarados en `@action` se apliquen correctamente.
 2. **Corregir Bug #2** — Eliminar `operator_password` de la respuesta de `my_assigned_requests`.
@@ -2125,9 +2221,9 @@ Se eliminó la operación duplicada de `0012`. Las migraciones ahora corren sin 
 5. **Integrar en CI/CD** — Agregar el comando de pytest a la pipeline para que corra automáticamente en cada push a `testing`.
 
 
-## Mapas CO - Manual de solución de problemas recurrentes 
+### D.7.4 Mapas.co — Manual de solución de problemas recurrentes
 
-# Mapasco API — Guía de Problemas Recurrentes
+**Mapasco API — Guía de Problemas Recurrentes**
 
 **Servidor:** `100.29.90.238` (interno) / `3.214.85.15` (IP pública AWS)  
 **Proyecto:** `/home/ubuntu/mapasco-api/mapasco`  
@@ -2136,7 +2232,7 @@ Se eliminó la operación duplicada de `0012`. Las migraciones ahora corren sin 
 
 ---
 
-## Índice
+#### Índice
 
 1. [Servicio mapasco.service caído](#1-servicio-mapascoservice-caído)
 2. [Estilos del panel admin no cargan](#2-estilos-del-panel-admin-no-cargan)
@@ -2144,19 +2240,19 @@ Se eliminó la operación duplicada de `0012`. Las migraciones ahora corren sin 
 4. [Catálogo Salesforce desactualizado](#4-catálogo-salesforce-desactualizado)
 5. [Rectificar un descuento de créditos incorrecto](#5-rectificar-un-descuento-de-créditos-incorrecto)
 6. [Conectarse a la base de datos desde DBeaver](#6-conectarse-a-la-base-de-datos-desde-dbeaver)
-7. [Usuarios no pueden acceder a mapas.co](#7-usuarios-no-pueden-acceder-a-mascoaco)
+7. [Usuarios no pueden acceder a mapas.co](#7-usuarios-no-pueden-acceder-a-mapasco)
 8. [Exportar datos a CSV](#8-exportar-datos-a-csv)
 9. [Comandos de referencia rápida](#9-comandos-de-referencia-rápida)
 
 ---
 
-## 1. Servicio mapasco.service caído
+#### 1. Servicio mapasco.service caído
 
-### Síntomas
+##### Síntomas
 - La API no responde
 - `sudo systemctl status mapasco.service` muestra error o el worker reinicia continuamente
 
-### Dónde revisar
+##### Dónde revisar
 ```bash
 # Estado del servicio
 sudo systemctl status mapasco.service --no-pager -l
@@ -2168,7 +2264,7 @@ sudo journalctl -u mapasco.service -f
 cat /etc/systemd/system/mapasco.service
 ```
 
-### Causa más común — comas faltantes en production.py
+##### Causa más común — comas faltantes en production.py
 
 Django concatena strings adyacentes sin coma automáticamente, generando URLs malformadas que fallan en el system check:
 
@@ -2195,7 +2291,7 @@ CORS_ALLOWED_ORIGINS = [
 
 Aplica igual para `ALLOWED_HOSTS` y `CSRF_TRUSTED_ORIGINS` en el mismo archivo.
 
-### Solución
+##### Solución
 ```bash
 # 1. Editar el archivo
 nano /home/ubuntu/mapasco-api/mapasco/config/settings/production.py
@@ -2209,22 +2305,22 @@ sudo systemctl status mapasco.service
 
 ---
 
-## 2. Estilos del panel admin no cargan
+#### 2. Estilos del panel admin no cargan
 
-### Síntomas
+##### Síntomas
 - El panel en `/admin/` carga pero sin CSS (texto plano, sin diseño)
 - La URL funciona: `http://100.29.90.238:8000/admin/`
 
-### Causa
+##### Causa
 Con `DEBUG = False`, Django no sirve archivos estáticos. Se requiere WhiteNoise + `collectstatic`.
 
-### Archivos relevantes
+##### Archivos relevantes
 | Archivo | Qué revisar |
 |---|---|
 | `config/settings/base.py` | `STATIC_ROOT` descomentado y `WhiteNoiseMiddleware` en `MIDDLEWARE` |
 | `staticfiles/` | Que exista y tenga contenido |
 
-### Verificación rápida
+##### Verificación rápida
 ```bash
 # ¿WhiteNoise está en el middleware?
 grep "whitenoise" /home/ubuntu/mapasco-api/mapasco/config/settings/base.py
@@ -2236,7 +2332,7 @@ grep "STATIC_ROOT" /home/ubuntu/mapasco-api/mapasco/config/settings/base.py
 ls /home/ubuntu/mapasco-api/mapasco/staticfiles/admin/css/ | head -5
 ```
 
-### Solución
+##### Solución
 ```bash
 cd /home/ubuntu/mapasco-api/mapasco
 
@@ -2247,7 +2343,7 @@ cd /home/ubuntu/mapasco-api/mapasco
 sudo systemctl restart mapasco.service
 ```
 
-### Configuración correcta en base.py
+##### Configuración correcta en base.py
 ```python
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -2263,20 +2359,20 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'             # ← debe estar descomentado
 
 ---
 
-## 3. precio_unitario_cmc es NULL en cotizaciones
+#### 3. precio_unitario_cmc es NULL en cotizaciones
 
-### Síntomas
+##### Síntomas
 - La tabla `quotation_items` tiene `precio_unitario_cmc = NULL`
 - El frontend no recibe el precio en la respuesta
 
-### Archivos relevantes
+##### Archivos relevantes
 | Archivo | Qué hace |
 |---|---|
 | `src/catalog/services/price_resolver.py` | Resuelve el precio desde Salesforce |
 | `src/quotation_service/serializers.py` | Calcula `precio_cmc × area_km2` al crear |
 | `src/quotation_service/views.py` | Calcula precio al agregar items a cotización existente |
 
-### Diagnóstico
+##### Diagnóstico
 ```bash
 cd /home/ubuntu/mapasco-api/mapasco
 /home/ubuntu/env/mapas-api/bin/python manage.py shell -c "
@@ -2292,7 +2388,7 @@ print(f'found={result.found}, precio={result.precio_cmc}')
 "
 ```
 
-### Causas y fixes
+##### Causas y fixes
 
 **Causa A — Tabla `catalog_salesforce_products` vacía**
 ```bash
@@ -2322,7 +2418,7 @@ PROCESAMIENTO_NORM_MAP = {
 }
 ```
 
-### Variables de entorno requeridas (`.env`)
+##### Variables de entorno requeridas (`.env`)
 ```env
 SALESFORCE_CLIENT_ID=<Consumer Key>
 SALESFORCE_CLIENT_SECRET=<Consumer Secret>
@@ -2331,14 +2427,14 @@ SALESFORCE_TOKEN_URL=https://<instancia>.my.salesforce.com/services/oauth2/token
 
 ---
 
-## 4. Catálogo Salesforce desactualizado
+#### 4. Catálogo Salesforce desactualizado
 
-### Cuándo ejecutar
+##### Cuándo ejecutar
 - Después de cambiar precios en Salesforce
 - Si `precio_unitario_cmc` devuelve valores incorrectos
 - Periódicamente (se recomienda programar un cron)
 
-### Comandos
+##### Comandos
 ```bash
 cd /home/ubuntu/mapasco-api/mapasco
 
@@ -2349,7 +2445,7 @@ cd /home/ubuntu/mapasco-api/mapasco
 /home/ubuntu/env/mapas-api/bin/python manage.py sync_catalog --dry-run
 ```
 
-### Tabla en base de datos
+##### Tabla en base de datos
 **`catalog_salesforce_products`** — productos activos con precios CMC.
 
 ```bash
@@ -2363,12 +2459,12 @@ for p in SalesforceProduct.objects.filter(is_active=True, available_in_mapas_co=
 
 ---
 
-## 5. Rectificar un descuento de créditos incorrecto
+#### 5. Rectificar un descuento de créditos incorrecto
 
-### Cuándo usarlo
+##### Cuándo usarlo
 Un operario registró un DEBIT por un monto mayor al real y hay que devolver la diferencia.
 
-### Identificar la transacción
+##### Identificar la transacción
 ```bash
 /home/ubuntu/env/mapas-api/bin/python manage.py shell -c "
 from src.credits.models import CreditBag, BagTransaction
@@ -2385,7 +2481,7 @@ for tx in BagTransaction.objects.filter(bag=bag, consumed_by=user).order_by('-cr
 "
 ```
 
-### Aplicar reembolso
+##### Aplicar reembolso
 ```bash
 /home/ubuntu/env/mapas-api/bin/python manage.py shell -c "
 from src.credits.models import CreditBag
@@ -2407,15 +2503,15 @@ print(f'✅ Reembolso tx id={refund.id} | Disponibles ahora: {bag.remaining_cred
 "
 ```
 
-### Tablas involucradas
+##### Tablas involucradas
 - **`credit_bags`** — bolsas de créditos (`used_credits` se actualiza)
 - **`bag_transactions`** — historial (se crea registro tipo `REFUND`)
 
 ---
 
-## 6. Conectarse a la base de datos desde DBeaver
+#### 6. Conectarse a la base de datos desde DBeaver
 
-### Credenciales
+##### Credenciales
 | Campo | Valor |
 |---|---|
 | Host | `localhost` |
@@ -2426,7 +2522,7 @@ print(f'✅ Reembolso tx id={refund.id} | Disponibles ahora: {bag.remaining_cred
 
 > PostgreSQL solo escucha en localhost — se necesita **túnel SSH**.
 
-### Configuración del túnel SSH en DBeaver
+##### Configuración del túnel SSH en DBeaver
 **Pestaña SSH:**
 | Campo | Valor |
 |---|---|
@@ -2436,7 +2532,7 @@ print(f'✅ Reembolso tx id={refund.id} | Disponibles ahora: {bag.remaining_cred
 | Authentication Method | Public Key |
 | Private Key | ruta a tu archivo `.pem` (EC2-SRV-MAPASV2.pem) |
 
-### Tablas principales
+##### Tablas principales
 | Tabla | Contenido |
 |---|---|
 | `auth_user` / `users_customuser` | Usuarios |
@@ -2449,9 +2545,9 @@ print(f'✅ Reembolso tx id={refund.id} | Disponibles ahora: {bag.remaining_cred
 
 ---
 
-## 7. Usuarios no pueden acceder a mapas.co
+#### 7. Usuarios no pueden acceder a mapas.co
 
-### Diagnóstico rápido
+##### Diagnóstico rápido
 ```bash
 # Estado de servicios
 sudo systemctl status nginx mapasco --no-pager | grep "Active:"
@@ -2467,7 +2563,7 @@ curl -sI http://localhost:8000/api/v1/
 ss -tlnp | grep 8000
 ```
 
-### Problema conocido — Nginx sin proxy_pass
+##### Problema conocido — Nginx sin proxy_pass
 Nginx está configurado con la página **default** (`/var/www/html`). No hay `proxy_pass` al puerto 8000 de Django.
 
 **Archivo a modificar:** `/etc/nginx/sites-available/default`
@@ -2496,7 +2592,7 @@ server {
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-### DNS
+##### DNS
 ```
 mapas.co     → CloudFront → EC2:80 → Nginx → Django:8000
 www.mapas.co → CloudFront (d3s0758d1qj7mg.cloudfront.net)
@@ -2504,9 +2600,9 @@ www.mapas.co → CloudFront (d3s0758d1qj7mg.cloudfront.net)
 
 ---
 
-## 8. Exportar datos a CSV
+#### 8. Exportar datos a CSV
 
-### Exportar todos los usuarios
+##### Exportar todos los usuarios
 ```bash
 cd /home/ubuntu/mapasco-api/mapasco
 /home/ubuntu/env/mapas-api/bin/python manage.py shell << 'EOF'
@@ -2517,7 +2613,7 @@ User = get_user_model()
 EOF
 ```
 
-### Exportar bolsas de créditos por nombre
+##### Exportar bolsas de créditos por nombre
 ```bash
 /home/ubuntu/env/mapas-api/bin/python manage.py shell -c "
 from src.credits.models import CreditBag
@@ -2529,9 +2625,9 @@ for b in bags:
 
 ---
 
-## 9. Comandos de referencia rápida
+#### 9. Comandos de referencia rápida
 
-### Servicios
+##### Servicios
 ```bash
 sudo systemctl status mapasco        # estado
 sudo systemctl restart mapasco       # reiniciar
@@ -2539,7 +2635,7 @@ sudo systemctl restart nginx         # reiniciar nginx
 sudo journalctl -u mapasco -f        # logs en tiempo real
 ```
 
-### Django
+##### Django
 ```bash
 cd /home/ubuntu/mapasco-api/mapasco
 PYTHON=/home/ubuntu/env/mapas-api/bin/python
@@ -2551,7 +2647,7 @@ $PYTHON manage.py sync_catalog       # sincronizar catálogo Salesforce
 $PYTHON manage.py createsuperuser    # crear usuario admin
 ```
 
-### Git
+##### Git
 ```bash
 git log --oneline -10                # commits recientes
 git checkout main                    # cambiar a producción
@@ -2559,12 +2655,12 @@ git merge products                   # traer cambios de products a main
 git status                           # ver cambios pendientes
 ```
 
-### Base de datos (desde el servidor)
+##### Base de datos (desde el servidor)
 ```bash
 psql -U macuser -d mapasco -h localhost
 ```
 
-### Rutas clave del proyecto
+##### Rutas clave del proyecto
 ```
 /home/ubuntu/mapasco-api/
 ├── mapasco/
@@ -2586,7 +2682,487 @@ psql -U macuser -d mapasco -h localhost
 
 
 
-### Plantilla por aplicación
+## D.8 Control de datos con Django shell (Mapas.co y ABACO)
+
+Procedimiento paso a paso para consultar información operativa (usuarios, uso de la API, créditos, actividad por fechas) directamente desde el shell de Django en **Mapas.co** y **ABACO**.
+
+> **Regla de oro:** el shell trabaja contra la base de datos real. Esta guía es **solo de lectura**. Nunca ejecutes `.save()`, `.update()`, `.delete()` ni `bulk_*` en producción sin un issue aprobado y respaldo previo.
+
+---
+
+### D.8.1 Acceder al contenedor / servidor
+
+Elige según dónde corra el backend.
+
+#### EC2 directo (configuración actual de producción)
+
+Ambas APIs corren en EC2 como servicios `systemd` (gunicorn), sin contenedor:
+
+```bash
+# ABACO
+cd /home/ubuntu/abaco-api/abacoBe
+python manage.py shell
+
+# Mapas.co (usar el python del virtualenv del proyecto)
+cd /home/ubuntu/mapasco-api/mapasco
+/home/ubuntu/env/mapas-api/bin/python manage.py shell
+```
+
+#### EC2 con Docker
+```bash
+ssh -i ~/.ssh/<llave>.pem ubuntu@<ip-o-host>
+
+# Ver contenedores corriendo
+docker ps
+
+# Entrar al contenedor del backend
+docker exec -it <nombre_contenedor_backend> bash
+```
+
+#### EKS / Kubernetes
+```bash
+# Confirmar contexto del cluster correcto
+kubectl config current-context
+
+# Listar pods del backend
+kubectl get pods -n <namespace> | grep backend
+
+# Entrar al pod
+kubectl exec -it <pod-backend> -n <namespace> -- bash
+```
+
+#### Local (con dump o BD de staging)
+```bash
+cd <ruta-proyecto>
+source venv/bin/activate   # o: poetry shell
+```
+
+> Si es posible, conéctate a una **réplica de lectura** o a **staging** en lugar de la BD primaria de producción.
+
+---
+
+### D.8.2 Abrir el shell de Django
+
+#### Shell estándar
+```bash
+python manage.py shell
+```
+
+#### Shell recomendado: `shell_plus` (django-extensions)
+Carga automáticamente todos los modelos y helpers.
+```bash
+python manage.py shell_plus
+# Para ver el SQL que genera cada consulta:
+python manage.py shell_plus --print-sql
+```
+
+Si no está instalado (solo en local/staging):
+```bash
+pip install django-extensions ipython
+# y agregar 'django_extensions' a INSTALLED_APPS
+```
+
+#### Verificar a qué BD estás conectado (¡hazlo siempre primero!)
+```python
+from django.db import connection
+print(connection.settings_dict["NAME"], connection.settings_dict["HOST"])
+```
+
+---
+
+### D.8.3 Descubrir modelos y campos
+
+Como cada proyecto tiene sus propios modelos, empieza por inspeccionarlos.
+
+#### Listar todos los modelos del proyecto
+```python
+from django.apps import apps
+
+for model in apps.get_models():
+    print(f"{model._meta.app_label}.{model.__name__}")
+```
+
+#### Filtrar modelos por palabra clave (ej. logs, requests, credit)
+```python
+for m in apps.get_models():
+    nombre = m.__name__.lower()
+    if any(k in nombre for k in ["log", "request", "usage", "credit", "wallet", "token"]):
+        print(f"{m._meta.app_label}.{m.__name__}")
+```
+
+#### Ver campos de un modelo
+```python
+Modelo = apps.get_model("app_label", "NombreModelo")
+for f in Modelo._meta.get_fields():
+    print(f.name, "-", f.get_internal_type())
+```
+
+#### Obtener el modelo de usuario activo
+```python
+from django.contrib.auth import get_user_model
+User = get_user_model()
+```
+
+---
+
+### D.8.4 Consultas de usuarios
+
+```python
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
+
+User = get_user_model()
+```
+
+#### Totales
+```python
+User.objects.count()                              # Total de usuarios
+User.objects.filter(is_active=True).count()       # Activos
+User.objects.filter(is_staff=True).count()        # Staff
+User.objects.filter(is_superuser=True).values_list("username", flat=True)
+```
+
+#### Usuarios que han iniciado sesión
+```python
+User.objects.filter(last_login__isnull=False).count()     # Alguna vez
+User.objects.filter(last_login__isnull=True).count()      # Nunca
+
+hace_30 = timezone.now() - timedelta(days=30)
+User.objects.filter(last_login__gte=hace_30).count()      # Últimos 30 días
+```
+
+#### Registros nuevos en un rango
+```python
+User.objects.filter(
+    date_joined__date__range=("2026-01-01", "2026-10-31")
+).count()
+```
+
+#### Buscar un usuario
+```python
+User.objects.filter(email__icontains="dominio.com").values("id", "username", "email", "last_login")
+User.objects.get(username="usuario_x")
+```
+
+#### Usuarios por grupo / rol
+```python
+from django.contrib.auth.models import Group
+from django.db.models import Count
+
+Group.objects.annotate(total=Count("user")).values("name", "total")
+```
+
+#### Usuarios por organización / tenant (si aplica multi-tenant)
+```python
+# Ajustar 'organization' al nombre real del FK
+User.objects.values("organization__name").annotate(total=Count("id")).order_by("-total")
+```
+
+---
+
+### D.8.5 Consultas de uso de la API
+
+Depende de cómo se registra el uso en cada proyecto. Identifica primero cuál aplica (paso 3).
+
+#### Opción A — Modelo propio de log de peticiones
+Ejemplo asumiendo un modelo `ApiRequestLog` con campos `user`, `endpoint`, `method`, `status_code`, `created_at`:
+
+```python
+from django.apps import apps
+from django.db.models import Count
+
+Log = apps.get_model("<app_label>", "ApiRequestLog")
+
+# Usuarios ÚNICOS que usaron la API
+Log.objects.values("user").distinct().count()
+
+# Usuarios únicos en un periodo
+Log.objects.filter(
+    created_at__date__range=("2026-10-01", "2026-10-31")
+).values("user").distinct().count()
+
+# Total de peticiones
+Log.objects.count()
+
+# Top 10 usuarios que más consumen
+(Log.objects.values("user__username")
+    .annotate(total=Count("id"))
+    .order_by("-total")[:10])
+
+# Endpoints más usados
+(Log.objects.values("endpoint")
+    .annotate(total=Count("id"))
+    .order_by("-total")[:15])
+
+# Errores (4xx / 5xx)
+Log.objects.filter(status_code__gte=400).values("status_code").annotate(total=Count("id"))
+```
+
+#### Opción B — `drf-api-tracking` (`rest_framework_tracking`)
+```python
+from rest_framework_tracking.models import APIRequestLog
+from django.db.models import Count, Avg
+
+APIRequestLog.objects.values("user").distinct().count()
+APIRequestLog.objects.values("path").annotate(total=Count("id")).order_by("-total")[:10]
+APIRequestLog.objects.aggregate(promedio_ms=Avg("response_ms"))
+```
+
+#### Opción C — Tokens de DRF / API Keys
+```python
+# Token clásico de DRF
+from rest_framework.authtoken.models import Token
+Token.objects.count()                               # Usuarios con token
+Token.objects.select_related("user").values("user__username", "created")
+
+# djangorestframework-api-key
+from rest_framework_api_key.models import APIKey
+APIKey.objects.filter(revoked=False).count()
+```
+
+#### Opción D — Sin tabla de logs
+Si no hay logs en BD, el uso real está en **CloudWatch / logs del ALB / CloudFront**. Desde el shell solo puedes aproximar con `last_login` o con registros de negocio (procesamientos, descargas, consumos de créditos).
+
+---
+
+### D.8.6 Filtros por fechas y agrupaciones
+
+```python
+from django.db.models import Count
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
+```
+
+#### Usuarios activos de la API por mes
+```python
+(Log.objects
+    .annotate(mes=TruncMonth("created_at"))
+    .values("mes")
+    .annotate(usuarios=Count("user", distinct=True), peticiones=Count("id"))
+    .order_by("mes"))
+```
+
+#### Registros de usuarios por mes
+```python
+(User.objects
+    .annotate(mes=TruncMonth("date_joined"))
+    .values("mes")
+    .annotate(total=Count("id"))
+    .order_by("mes"))
+```
+
+#### Lookups de fecha útiles
+| Lookup | Ejemplo |
+|---|---|
+| Año | `created_at__year=2026` |
+| Mes | `created_at__month=10` |
+| Día exacto | `created_at__date="2026-10-29"` |
+| Rango | `created_at__date__range=("2026-10-01", "2026-10-31")` |
+| Mayor/menor | `created_at__gte=fecha`, `created_at__lt=fecha` |
+
+#### Filtros combinados con Q
+```python
+from django.db.models import Q
+
+Log.objects.filter(
+    Q(status_code__gte=500) | Q(endpoint__icontains="process"),
+    created_at__year=2026,
+).count()
+```
+
+> Las fechas se guardan en UTC si `USE_TZ=True`. Para reportes en hora Colombia:
+> ```python
+> import zoneinfo
+> bogota = zoneinfo.ZoneInfo("America/Bogota")
+> TruncDay("created_at", tzinfo=bogota)
+> ```
+
+---
+
+### D.8.7 Consultas de créditos (wallet)
+
+Aplica para el microservicio de créditos compartido entre Mapas.co y ABACO. Ajusta nombres de modelos/campos a los reales.
+
+```python
+from django.db.models import Sum, Count
+
+Wallet = apps.get_model("<app_label>", "Wallet")
+Tx = apps.get_model("<app_label>", "CreditTransaction")
+
+# Usuarios con saldo
+Wallet.objects.filter(balance__gt=0).count()
+
+# Créditos consumidos en el mes
+Tx.objects.filter(
+    type="DEBIT", created_at__year=2026, created_at__month=10
+).aggregate(total=Sum("amount"))
+
+# Top consumidores
+(Tx.objects.filter(type="DEBIT")
+    .values("wallet__user__username")
+    .annotate(consumo=Sum("amount"))
+    .order_by("-consumo")[:10])
+
+# Consumo por servicio / producto
+Tx.objects.values("service").annotate(total=Sum("amount"), usos=Count("id"))
+```
+
+---
+
+### D.8.8 Consultas espaciales (PostGIS)
+
+Útil en ABACO (alertas de deforestación) y Mapas.co.
+
+```python
+from django.contrib.gis.geos import GEOSGeometry, Polygon
+from django.contrib.gis.db.models.functions import Area, Transform
+
+Alerta = apps.get_model("<app_label>", "Alerta")
+
+# Alertas dentro de un polígono (WKT en EPSG:4326)
+aoi = GEOSGeometry("POLYGON((-74.2 4.5, -74.0 4.5, -74.0 4.8, -74.2 4.8, -74.2 4.5))", srid=4326)
+Alerta.objects.filter(geom__intersects=aoi).count()
+
+# Alertas dentro de un bbox
+bbox = Polygon.from_bbox((-75.0, 1.0, -72.0, 3.0))
+Alerta.objects.filter(geom__within=bbox).count()
+
+# Área total en hectáreas (reproyectando a CTM12 / EPSG:9377)
+from django.db.models import Sum
+(Alerta.objects
+    .annotate(area_m2=Area(Transform("geom", 9377)))
+    .aggregate(total=Sum("area_m2")))   # dividir entre 10_000 para ha
+```
+
+---
+
+### D.8.9 SQL directo
+
+Cuando el ORM se queda corto o necesitas una consulta muy específica:
+
+```python
+from django.db import connection
+
+with connection.cursor() as cursor:
+    cursor.execute("""
+        SELECT date_trunc('month', created_at) AS mes,
+               COUNT(DISTINCT user_id) AS usuarios,
+               COUNT(*) AS peticiones
+        FROM <tabla_logs>
+        WHERE created_at >= %s
+        GROUP BY 1
+        ORDER BY 1;
+    """, ["2026-01-01"])
+    for fila in cursor.fetchall():
+        print(fila)
+```
+
+> Usa **siempre parámetros** (`%s`) — nunca concatenes strings en el SQL.
+
+Ver el SQL que genera un QuerySet:
+```python
+print(User.objects.filter(is_active=True).query)
+```
+
+---
+
+### D.8.10 Exportar resultados a CSV
+
+```python
+import csv
+
+qs = (Log.objects
+        .values("user__username", "user__email")
+        .annotate(total=Count("id"))
+        .order_by("-total"))
+
+with open("/tmp/uso_api.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=["user__username", "user__email", "total"])
+    writer.writeheader()
+    writer.writerows(qs)
+```
+
+Copiar el archivo fuera del contenedor:
+```bash
+# Docker
+docker cp <contenedor>:/tmp/uso_api.csv ./uso_api.csv
+
+# Kubernetes
+kubectl cp <namespace>/<pod>:/tmp/uso_api.csv ./uso_api.csv
+```
+
+Con pandas (si está disponible):
+```python
+import pandas as pd
+pd.DataFrame(list(qs)).to_csv("/tmp/uso_api.csv", index=False)
+```
+
+---
+
+### D.8.11 Buenas prácticas y seguridad
+
+1. **Verifica la BD** antes de cualquier consulta (`connection.settings_dict`).
+2. **Prefiere réplica de lectura o staging** para reportes pesados.
+3. **Usa `.count()`, `.exists()` y `.values()`** — evita traer objetos completos.
+4. **Limita resultados** con slicing `[:100]` al explorar.
+5. **Evita N+1** usando `select_related()` / `prefetch_related()`.
+6. **Consultas pesadas en horarios de baja carga** (afectan a los usuarios de producción).
+7. **Modo solo lectura forzado** — si necesitas blindarte, envuelve en una transacción que siempre se revierte:
+   ```python
+   from django.db import transaction
+
+   with transaction.atomic():
+       # ... consultas ...
+       transaction.set_rollback(True)
+   ```
+8. **Datos personales**: no copies correos ni datos de clientes (gobierno, militares, privados) a canales públicos. Comparte agregados, no listados, salvo que el issue lo justifique.
+9. **Documenta en el issue** qué consultaste y para qué (trazabilidad).
+
+---
+
+### D.8.12 Chuleta rápida
+
+```python
+# Setup
+from django.apps import apps
+from django.contrib.auth import get_user_model
+from django.db.models import Count, Sum, Avg, Q
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+from datetime import timedelta
+User = get_user_model()
+
+# Usuarios
+User.objects.count()
+User.objects.filter(is_active=True).count()
+User.objects.filter(last_login__gte=timezone.now() - timedelta(days=30)).count()
+
+# Uso API (ajustar modelo)
+Log = apps.get_model("<app>", "<ModeloLog>")
+Log.objects.values("user").distinct().count()
+Log.objects.annotate(mes=TruncMonth("created_at")).values("mes") \
+   .annotate(usuarios=Count("user", distinct=True)).order_by("mes")
+
+# Ver SQL
+print(qs.query)
+```
+
+---
+
+#### Datos por proyecto (completar los vacíos)
+
+| Dato | Mapas.co | ABACO |
+|---|---|---|
+| Dónde corre (EC2 / EKS) | EC2 (`mapasco.service`) | EC2 (`abaco.service`) |
+| Contenedor / pod backend | | |
+| Modelo de logs de API | | |
+| Modelo de wallet / transacciones | app `src/credits` (bolsas y transacciones) | |
+| Modelo principal espacial | | `GeographicRequest` |
+| Réplica de lectura disponible | | |
+
+---
+
+## D.9 Plantilla por aplicación
 
 ```markdown
 ### <Nombre de la aplicación>
@@ -2602,7 +3178,7 @@ psql -U macuser -d mapasco -h localhost
 - **Incidencias frecuentes:** tabla síntoma / causa / solución
 ```
 
-### Lineamientos de despliegue (AWS)
+## D.10 Lineamientos de despliegue (AWS)
 
 | Componente | Estándar de la Fábrica |
 |---|---|
@@ -2610,7 +3186,7 @@ psql -U macuser -d mapasco -h localhost
 | **Backend** (DRF / FastAPI) | Imagen Docker > ECR > EKS o EC2. Las migraciones de base de datos se ejecutan como paso explícito del pipeline |
 | **Secretos** | GitHub Secrets / AWS Secrets Manager; nunca en el código |
 
-### Incidencias frecuentes transversales (AWS)
+## D.11 Incidencias frecuentes transversales (AWS)
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
